@@ -1,4 +1,4 @@
-*snmp_tool*
+snmp_tool
 =======
 snmp_tool is intended for copying Cisco router and switch configuration files to and from network based servers via snmp.  This is especially useful when making configuration changes to access methods like tacacs.  If a change to authentication has locked you out of the CLI, you can revert the change via pushing the configuration via snmp.
 
@@ -9,7 +9,7 @@ Implements the features of the Cisco config copy MIB:  ftp://ftp.cisco.com/pub/m
 Based on information found within the Cisco document: "How To Copy Configurations To and From Cisco Devices Using SNMP"
 http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15217-copy-configs-snmp.html
 
-Usage:<br>
+##### Usage: #####
 Instantiate the snmp_tool class with a hostname or ip address and optionally a community string and udp port number can be provided.  These default to 'private' and 161, respectively.
 Output from the pysnmp package has been simplified in that the data is returned without the error status.  Instead error with raise and OSError exception and will attempt to provide as much decoded error information as is available.
 
@@ -21,7 +21,7 @@ source and destination are always required and can be one of these: ['running', 
 server and filename are required when copying to/from a server.<br>
 With the exception of tftp, username and password are also required when copying to/from a server.<br>
 
-Example:
+##### Example: #####
 ```
 from snmp_tool import snmp_tool
 snmp = snmp_tool('172.17.0.32', 'private')
