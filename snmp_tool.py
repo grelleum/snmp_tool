@@ -54,6 +54,8 @@ class snmp_tool(object):
     and a method for copying Cisco configuration files.
     
     Instantiate object with a hostname/ip address
+    Optionally a community string and udp port number can be provided.
+    These default to 'private' and 161, respectively.
     """
 
     def __init__(self, host, community='private', port=161):
@@ -74,7 +76,7 @@ class snmp_tool(object):
                 )
             raise OSError(error_message)
 
-    def snmp_get(self, *args):
+    def get(self, *args):
         """Implements the snmp get function. Returns a list."""
         snmp_obj = cmdgen.CommandGenerator()
         results = snmp_obj.getCmd(
@@ -85,7 +87,7 @@ class snmp_tool(object):
         self._raise_exception_on_error(results)
         return results[3]
 
-    def snmp_set(self, *args):
+    def set(self, *args):
         """Implements the snmp set function. Returns a list."""
         snmp_obj = cmdgen.CommandGenerator()
         results = snmp_obj.setCmd(
@@ -103,7 +105,7 @@ class snmp_tool(object):
         self.valid_set = self.local_set.union(self.network_set)
 
     def _delete_table_entry(self, mib):
-        results = self.snmp_set(mib.action('destroy'))
+        results = self.set(mib.action('destroy'))
 
     def _wait_for_copy_then_delete_row(self, mib):
         """Common function for use by the copy functions.
@@ -112,17 +114,17 @@ class snmp_tool(object):
         result = ''
         for x in range(1, 300):
             time.sleep(0.1)
-            result = mib.status(self.snmp_get(mib.status()))
+            result = mib.status(self.get(mib.status()))
             if result in ['not available', 'successful']:
                 break
             elif result == 'failed':
-                result = mib.cause_of_failure(self.snmp_get(mib.cause_of_failure()))
+                result = mib.cause_of_failure(self.get(mib.cause_of_failure()))
                 break
         self._delete_table_entry(mib)
         return 'snmp copy result: ' + result
 
     def copy(self, source=None, destination=None, server=None, filename=None, 
-            username=None, password=None, protocol=None):
+            username=None, password=None):
         mib = CiscoCopyMib()
         self.mibby = mib
         self._create_sets()
@@ -150,7 +152,7 @@ class snmp_tool(object):
         if protocol in self.network_set:
             parameters.append(mib.protocol(protocol))
         parameters.append(mib.action('create_and_go'))
-        self.snmp_set(*parameters)
+        self.set(*parameters)
         return(self._wait_for_copy_then_delete_row(mib))
 
 
@@ -319,7 +321,7 @@ class CiscoCopyMib(object):
         """Cause of the copy failure.
 
         Returns an oid for retrieving the cause of a failue.
-        Optional argument is the return list from an snmp_get.
+        Optional argument is the return list from an snmp get.
         Returns a string based on failure code in the return list.
         Returns False if returned value is 'NoSuchInstance'.
         """
@@ -352,37 +354,3 @@ class CiscoCopyMib(object):
             value = rfc1902.IpAddress(arg)
             return (oid, value)
 
-
-"""
-ccCopyServerAddressType OBJECT-TYPE
-    SYNTAX          InetAddressType
-    MAX-ACCESS      read-create
-    STATUS          current
-    DESCRIPTION
-        "This object indicates the transport type of the
-        address contained in ccCopyServerAddressRev1 object.
-
-        This must be created when either the
-        ccCopySourceFileType or ccCopyDestFileType has the
-        value 'networkFile'." 
-    ::= { ccCopyEntry 15 }
-
-ccCopyServerAddressRev1 OBJECT-TYPE
-    SYNTAX          InetAddress
-    MAX-ACCESS      read-create
-    STATUS          current
-    DESCRIPTION
-        "The IP address of the TFTP server from (or to)
-        which to copy the configuration file. This object
-        must be created when either the 
-        ccCopySourceFileType or ccCopyDestFileType has the
-        value 'networkFile'.  
-
-        All bits as 0s or 1s for ccCopyServerAddressRev1 are
-        not allowed.
-
-        The format of this address depends on the value of 
-        the ccCopyServerAddressType object." 
-    ::= { ccCopyEntry 16 }
-
-"""
