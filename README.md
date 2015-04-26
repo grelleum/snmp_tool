@@ -22,8 +22,11 @@ With the exception of tftp, username and password are also required when copying
 Example:
 
 from snmp_tool import snmp_tool
+
 snmp = snmp_tool('172.17.0.32', 'private')
+
 try:
+
     # Fetch configuration changes from tftp server.
     snmp.copy('tftp', 'running', '172.17.0.254', 'change_12345')
     # Save the running configuration to nvram.
