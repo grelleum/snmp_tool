@@ -15,12 +15,12 @@ Output from the pysnmp package has been simplified in that the data is returned 
 
 The snmp_tool class provides get, set, and copy methods.  get and set are standard snmp operations and can be used with any SNMPv1 or SNMPv2c device.  copy is specific to compatible Cisco routers and switches and the main purpose of the  module.
 
-Once you have instantiated the object, you can use it to perform the copy.
-object.copy(source=None, destination=None, server=None, filename=None, username=None, password=None)
-source and destination are always required and can be one of these: ['running', 'startup', 'tftp', 'ftp', 'rcp', 'scp', 'sftp']
-server and filename when copying to/from a server.  
-With the exception of tftp, username and password are also required when copying to/from a server.
-=======
+Once you have instantiated the object, you can use it to perform the copy.<br>
+object.copy(source=None, destination=None, server=None, filename=None, username=None, password=None)<br>
+source and destination are always required and can be one of these: ['running', 'startup', 'tftp', 'ftp', 'rcp', 'scp', 'sftp']<br>
+server and filename are required when copying to/from a server.<br>
+With the exception of tftp, username and password are also required when copying to/from a server.<br>
+
 Example:
 ```
 from snmp_tool import snmp_tool
@@ -37,5 +37,5 @@ try:
 except OSError as exception:
     print(exception)
 ```
-=======
+<br>
 Intersting find: importing unicode_literals from __future__ in python2 breaks compatibility with the pysnmp package.  Apparently the authors of pysnmp detect the python version running and require a Python 2 bytestring when runnning in Python 2.
