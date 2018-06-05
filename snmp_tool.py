@@ -54,16 +54,17 @@ class snmp_tool(object):
     and a method for copying Cisco configuration files.
     
     Instantiate object with a hostname/ip address
-    Optionally a community string and udp port number can be provided.
+    Optionally a community string, udp port number and source address of snmp server can be provided.
     These default to 'private' and 161, respectively.
     """
 
-    def __init__(self, host, community='private', port=161):
+    def __init__(self, host, community='private', port=161,  src_address='0.0.0.0'):
         self.host = host
         self.community = community
         self.port = port
         self.system_description = '1.3.6.1.2.1.1.1.0'
         self.system_name = '1.3.6.1.2.1.1.5.0'
+        self.src_address = src_address
 
     def _raise_exception_on_error(self, results):
         errorIndication, errorStatus, errorIndex, varBinds = results
@@ -81,7 +82,7 @@ class snmp_tool(object):
         snmp_obj = cmdgen.CommandGenerator()
         results = snmp_obj.getCmd(
             cmdgen.CommunityData(self.community),
-            cmdgen.UdpTransportTarget((self.host, self.port)),
+            cmdgen.UdpTransportTarget((self.host, self.port)).setLocalAddress((self.src_address, 0)),
             *args
             )
         self._raise_exception_on_error(results)
@@ -92,7 +93,7 @@ class snmp_tool(object):
         snmp_obj = cmdgen.CommandGenerator()
         results = snmp_obj.setCmd(
             cmdgen.CommunityData(self.community),
-            cmdgen.UdpTransportTarget((self.host, self.port)),
+            cmdgen.UdpTransportTarget((self.host, self.port)).setLocalAddress((self.src_address, 0)),
             *args
             )
         self._raise_exception_on_error(results)
