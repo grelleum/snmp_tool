@@ -10,7 +10,7 @@ Based on information found within the Cisco document: "How To Copy Configuration
 http://www.cisco.com/c/en/us/support/docs/ip/simple-network-management-protocol-snmp/15217-copy-configs-snmp.html
 
 ##### Usage: #####
-Instantiate the snmp_tool class with a hostname or ip address and optionally a community string and udp port number can be provided.  These default to 'private' and 161, respectively.<br>
+Instantiate the snmp_tool class with a hostname or ip address and optionally a community string, udp port number and snmp server source address can be provided.  These default to 'private', 161 and '0.0.0.0' respectively.<br>
 Output from the pysnmp package has been simplified in that the data is returned without the error status.  Instead error with raise and OSError exception and will attempt to provide as much decoded error information as is available.
 
 The snmp_tool class provides get, set, and copy methods.  get and set are standard snmp operations and can be used with any SNMPv1 or SNMPv2c device.  copy is specific to compatible Cisco routers and switches and the main purpose of the  module.
@@ -24,7 +24,7 @@ With the exception of tftp, username and password are also required when copying
 ##### Example: #####
 ```
 from snmp_tool import snmp_tool
-snmp = snmp_tool('172.17.0.32', 'private')
+snmp = snmp_tool('172.17.0.32', 'private', src_address = '1.1.1.1')
 try:
     # Fetch configuration changes from tftp server.
     snmp.copy('tftp', 'running', '172.17.0.254', 'change_12345')
