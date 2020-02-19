@@ -125,7 +125,7 @@ class snmp_tool(object):
         return 'snmp copy result: ' + result
 
     def copy(self, source=None, destination=None, server=None, filename=None, 
-            username=None, password=None):
+            username=None, password=None, protocol=None):
         mib = CiscoCopyMib()
         self.mibby = mib
         self._create_sets()
